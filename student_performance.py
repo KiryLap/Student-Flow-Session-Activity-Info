@@ -15,7 +15,7 @@ def create_db():
         CREATE TABLE IF NOT EXISTS students (
             id INTEGER PRIMARY KEY,
             name TEXT NOT NULL,
-            lastname TEXT NOT NULL,  -- Добавлен новый столбец для фамилии
+            lastname TEXT NOT NULL,  
             subject TEXT NOT NULL,
             group_name TEXT NOT NULL,
             grade REAL NOT NULL
@@ -73,8 +73,12 @@ def get_students(subject_filter=None, group_filter=None, order_by=None):
             query += ' WHERE group_name = ?'
         params.append(group_filter)
 
+    # Добавим возможность сортировки сначала по фамилии, затем по имени
     if order_by:
-        query += f' ORDER BY {order_by}'
+        if order_by == 'lastname':
+            query += ' ORDER BY lastname, name'  # Сначала по фамилии, затем по имени
+        else:
+            query += f' ORDER BY {order_by}'
 
     cursor.execute(query, params)
     records = cursor.fetchall()
@@ -141,7 +145,7 @@ def main():
     grade_option_menu = ctk.CTkOptionMenu(app, values=grades, command=lambda x: update_student_list())
     grade_option_menu.grid(row=4, column=1, padx=5, pady=5, sticky='w')
 
-    add_button = ctk.CTkButton(app, text="Add Student", command=add_student, fg_color="green")
+    add_button = ctk.CTkButton(app, text="Add Student", command=add_student, fg_color="#008000", hover_color="#006400")
     add_button.grid(row=5, column=0, columnspan=2, padx=5, pady=10)
 
     # Вторая колонка
@@ -150,7 +154,7 @@ def main():
     delete_id_entry = ctk.CTkEntry(app)
     delete_id_entry.grid(row=0, column=3, padx=5, pady=5, sticky='w')
 
-    delete_button = ctk.CTkButton(app, text="Delete Student", command=delete_student, fg_color="red")
+    delete_button = ctk.CTkButton(app, text="Delete Student", command=delete_student, fg_color="#B22222", hover_color="#8B0000")
     delete_button.grid(row=1, column=2, columnspan=2, padx=5, pady=10)
 
     # Третья колонка
